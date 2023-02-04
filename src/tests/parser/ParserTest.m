@@ -1,13 +1,13 @@
 classdef ParserTest < matlab.unittest.TestCase
     
     properties
-        Feature
+        BasicFeature
         Parser
     end
    
     methods(TestMethodSetup)
-        function setupFeature(testCase)
-            testCase.Feature = ["Scenario: First feature " 
+        function setupFeatures(testCase)
+            testCase.BasicFeature = ["Scenario: First feature " 
                                  "  Given I have two gherkins"
                                  "  When I eat one gherkin" 
                                  "  Then I have one gherkin"];
@@ -20,24 +20,18 @@ classdef ParserTest < matlab.unittest.TestCase
     methods(Test)
         % Test methods
         
-        function whenFeatureDefinitionIsEmpty_shouldReturnEmptyString(testCase)
-            testCase.verifyParsedGiven("", string.empty);
+        function whenFeatureContainsOneScenario_shouldGetItsName(testCase)
+            testCase.Parser.Feature(1).FileContent = testCase.BasicFeature;
+            testCase.Parser.parseFeatureScenarios();
+            testCase.verifyEqual(testCase.Parser.Feature.Scenario(1).Name, ...
+                "First feature");
         end
+        
 
-        function whenGivenIsMissing_shouldReturnEmptyString(testCase)
-            testCase.verifyParsedGiven("When I eat one gherkin", string.empty);
-        end
-
-        function whenOnlyGivenIsGiven_shouldReturnGiven(testCase)
-            testCase.verifyParsedGiven("Given I have two gherkins", "Given I have two gherkins");
-        end
     end
 
     methods (Access = private)
-        function verifyParsedGiven(testCase, featureText, parsedGiven)
-            testCase.Parser.FeatureDefinition = featureText;
-            testCase.verifyEqual(testCase.Parser.parseGiven(), parsedGiven);
-        end
+        
     end
     
 end

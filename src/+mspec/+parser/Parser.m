@@ -4,6 +4,7 @@ classdef Parser
     
     properties
         FeatureDefinition string = ""
+        Feature mspec.parser.Feature
     end
     
     methods
@@ -11,13 +12,11 @@ classdef Parser
             
         end
         
-        function given = parseGiven(obj)
-            if ~contains(obj.FeatureDefinition, 'given', 'IgnoreCase',true)
-                given = string.empty;
-                return
-            end
-            given = obj.FeatureDefinition;
+        function parseFeatureScenarios(obj)
+            obj.Feature.parseScenarios();
         end
+
+        
 
     end
 end
