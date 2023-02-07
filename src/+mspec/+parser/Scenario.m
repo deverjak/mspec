@@ -20,7 +20,6 @@ classdef Scenario < handle
                     line = obj.RawDefinition(i);
                     if contains(line, keyword)
                         obj.(keyword) = strtrim(line);
-%                         obj.RawDefinition(i) = [];
                     end
                 end
             end
