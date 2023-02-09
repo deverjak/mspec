@@ -26,7 +26,13 @@ classdef Document < handle
                     methoudGroupIndex = length(obj.MethodGroups)+1;
                     obj.MethodGroups(methoudGroupIndex).ParentScenario = ...
                         ['[S', num2str(i), ']'];
-                    tempDescription = ["Description", "[S1] Given logged User U"];
+                    if isequal(keyword, "Then")
+                         tempDescription = ["Test", ""; "Description", ...
+                        strcat(obj.MethodGroups(methoudGroupIndex).ParentScenario, obj.Feature.Scenario(i).(keyword))];
+                    else
+                         tempDescription = ["Description", ...
+                        strcat(obj.MethodGroups(methoudGroupIndex).ParentScenario, obj.Feature.Scenario(i).(keyword))];
+                    end
                     tempTable = array2table(tempDescription);
                     tempTable.Properties.VariableNames = {'Field', 'Value'};
                     obj.MethodGroups(methoudGroupIndex).Descriptor = [obj.MethodGroups(methoudGroupIndex).Descriptor; ...
