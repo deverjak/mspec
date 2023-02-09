@@ -2,7 +2,8 @@ classdef MethodGroup
 
     properties
         ParentScenario
-        Descriptor table = table([], [], 'VariableNames', {'Field', 'Value'})
+        IsTest logical = false
+        Description string = ""
         Methods table = table([], [], 'VariableNames', {'MethodName', 'Arguments'})
     end
 

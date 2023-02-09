@@ -3,7 +3,7 @@ classdef Document < handle
 
     properties
         Name
-        Properties
+        Properties = ["FixtureData", "struct()"]
         MethodGroups mspec.generator.MethodGroup = mspec.generator.MethodGroup.empty
     end
 
@@ -23,22 +23,32 @@ classdef Document < handle
         function createDocument(obj)
             for i = 1 : length(obj.Feature.Scenario)
                 for keyword = obj.Keywords
-                    methoudGroupIndex = length(obj.MethodGroups)+1;
-                    obj.MethodGroups(methoudGroupIndex).ParentScenario = ...
-                        ['[S', num2str(i), ']'];
-                    if isequal(keyword, "Then")
-                         tempDescription = ["Test", ""; "Description", ...
-                        strcat(obj.MethodGroups(methoudGroupIndex).ParentScenario, obj.Feature.Scenario(i).(keyword))];
-                    else
-                         tempDescription = ["Description", ...
-                        strcat(obj.MethodGroups(methoudGroupIndex).ParentScenario, obj.Feature.Scenario(i).(keyword))];
-                    end
-                    tempTable = array2table(tempDescription);
-                    tempTable.Properties.VariableNames = {'Field', 'Value'};
-                    obj.MethodGroups(methoudGroupIndex).Descriptor = [obj.MethodGroups(methoudGroupIndex).Descriptor; ...
-                        tempTable];
+                    mgIndex = obj.getMethodGroupIndex();
+                    obj.MethodGroups(mgIndex).ParentScenario = obj.getScenarioTag(i);
+                    obj.setTestProperty(keyword, mgIndex);
+                    obj.MethodGroups(mgIndex).Description = obj.getMethodGroupDescription(keyword, i);
+                    temp = table(obj.generateValidMethodNameFromDescription(keyword, i), "", 'VariableNames', {'MethodName', 'Arguments'});
+                    obj.MethodGroups(mgIndex).Methods = [obj.MethodGroups(mgIndex).Methods; temp];
                 end
             end
+        end
+
+        function index = getMethodGroupIndex(obj)
+            index = length(obj.MethodGroups)+1;
+        end
+        function tag = getScenarioTag(~, iScenario)
+            tag = ['[S', num2str(iScenario), ']'];
+        end
+        function setTestProperty(obj, keyword, methoudGroupIndex)
+            obj.MethodGroups(methoudGroupIndex).IsTest = isequal(keyword, "Then");
+        end
+        function description = getMethodGroupDescription(obj, keyword, index)
+            description = strcat(obj.getScenarioTag(index), obj.Feature.Scenario(index).(keyword));
+        end
+        function name = generateValidMethodNameFromDescription(obj, keyword, index)
+            name = char(genvarname(obj.Feature.Scenario(index).(keyword)));
+            name(1) = lower(name(1));
+            name = string(name);
         end
     end
 end

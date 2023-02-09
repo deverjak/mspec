@@ -12,6 +12,7 @@ classdef DocumentTest < matlab.unittest.TestCase
     methods(TestMethodSetup)
         function setupDocument(testCase)
             testCase.Document = mspec.generator.Document();
+            testCase.Document.Name = "NewFeature";
         end
         function setupDummyFeature(testCase)
             testCase.Feature = mspec.parser.Feature();
@@ -55,16 +56,23 @@ classdef DocumentTest < matlab.unittest.TestCase
                 '[S2]');
         end
         function testDescriptorInFirstGroup(testCase)
-            testCase.verifyEqual(testCase.Document.MethodGroups(1).Descriptor(1, :).Variables, ...
-                ["Description", "[S1]Given logged User U"]);
+            testCase.verifyEqual(testCase.Document.MethodGroups(1).Description, ...
+                "[S1]Given logged User U");
+            testCase.verifyFalse(testCase.Document.MethodGroups(1).IsTest);
         end
         function testDescriptorInWhenGroupOfSecondScenario(testCase)
-            testCase.verifyEqual(testCase.Document.MethodGroups(5).Descriptor(1, :).Variables, ...
-                ["Description", "[S2]When User U connects"]);
+            testCase.verifyEqual(testCase.Document.MethodGroups(5).Description, ...
+                "[S2]When User U connects");
+            testCase.verifyFalse(testCase.Document.MethodGroups(5).IsTest);
+            testCase.verifyEqual(testCase.Document.MethodGroups(5).Methods.Variables, ...
+                ["whenUserUConnects", ""]);
         end
         function testDescriptorInTestGroup(testCase)
-            testCase.verifyEqual(testCase.Document.MethodGroups(3).Descriptor.Variables, ...
-                ["Test", ""; "Description", "[S1]Then session is closed"]);
+            testCase.verifyEqual(testCase.Document.MethodGroups(3).Description, ...
+                "[S1]Then session is closed")
+            testCase.verifyTrue(testCase.Document.MethodGroups(3).IsTest);
+            testCase.verifyEqual(testCase.Document.MethodGroups(3).Methods.Variables, ...
+                ["thenSessionIsClosed", ""]);
         end
     end
     
