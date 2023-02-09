@@ -2,7 +2,7 @@ classdef Feature < handle
    
     properties
         FileName
-        FileContent
+        FileContent string
         Scenario mspec.parser.Scenario
     end
     

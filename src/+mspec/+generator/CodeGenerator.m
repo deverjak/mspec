@@ -1,12 +1,16 @@
 classdef CodeGenerator < handle
     %CODEGENERATOR Summary of this class goes here
     %   Detailed explanation goes here
-    
+
     properties (Access = protected)
-        Document mspec.generator.Document
         Code string = ""
     end
-    
+
+    properties (Access = public)
+        Document mspec.generator.Document
+        OutputFolder = pwd;
+    end
+
     methods
         function createMSpecFile(obj)
             obj.addProperties();
@@ -14,7 +18,7 @@ classdef CodeGenerator < handle
                 obj.addMethodGroup(i);
             end
             obj.generateClassdef(length(obj.Code)+1);
-            obj.saveToFile("NewFeatureMSpecTest.m");
+            obj.saveToFile(strcat(obj.Document.Name, 'MSpecTest','.m'));
         end
     end
 
@@ -23,7 +27,7 @@ classdef CodeGenerator < handle
             obj.Code(1, 1) = strcat("classdef ", string(obj.Document.Name),"MSpecTest < mspec.TestCase");
             obj.Code(lastLine, 1) = "end";
         end
-        
+
         function addProperties(obj)
             tempCode(1, 1) = "";
             tempCode(2, 1) = "properties";
@@ -60,8 +64,7 @@ classdef CodeGenerator < handle
         end
 
         function saveToFile(obj, filename)
-            writematrix( obj.Code , filename , "FileType", "text", "Delimiter", "bar");
+            writematrix( obj.Code , fullfile(obj.OutputFolder, filename) , "FileType", "text", "Delimiter", "bar");
         end
     end
 end
-
